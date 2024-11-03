@@ -10,6 +10,8 @@ import { CafeService } from './cafe.service';
 export class CafeComponent implements OnInit {
 
   cafes: Array<Cafe> = [];
+  tipos: Array<string> = [];
+  tiposTotal: Array<string> = [];
   constructor(private cafeService: CafeService) { }
 
   getCafes() {
@@ -18,8 +20,24 @@ export class CafeComponent implements OnInit {
     });
   }
 
+  getTipos() {
+    this.cafeService.getCafes().subscribe((data) => {
+      this.tipos = [];
+      data.forEach(cafe => {
+        if (!this.tipos.includes(cafe.tipo)) {
+          this.tipos.push(cafe.tipo);
+        }
+      });
+      this.tipos.forEach(tipo => {
+        let total: number = this.cafes.filter(cafe => cafe.tipo === tipo).length;
+        this.tiposTotal.push(`Total ${tipo}: ${total}`);
+      });
+    });  
+  }
+
   ngOnInit() {
     this.getCafes();
+    this.getTipos();
   }
 
 }
